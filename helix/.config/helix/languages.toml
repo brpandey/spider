@@ -1,0 +1,43 @@
+[[language]]
+name = "rust"
+language-servers = ["rust-analyzer" ]
+formatter = { command = "rustfmt" }
+auto-format = true
+##indent = { tab-width = 4, unit = "t" }
+
+[language-server.rust-analyzer]
+command = "rust-analyzer"
+
+[language-server.rust-analyzer.config]
+checkOnSave = {command = "clippy", extraArgs = ["--", "-W", "clippy::pedantic"]}
+cargo = {allFeatures = true}
+procMacro = {enable = true }
+
+[language-server.rust-analyzer.config.check]
+command = "clippy"
+
+
+[[language]]
+name = "elixir"
+scope = "source.elixir"
+injection-regex = "elixir"
+file-types = ["ex", "exs"]
+roots = ["mix.exs"]
+auto-format = true
+diagnostic-severity = "hint"
+comment-token = "#"
+indent = {tab-width = 2, unit = " "}
+language-servers = ["elixirls"]
+
+[language-server.elixirls]
+command = "elixir-ls"
+
+## elixir-ls install
+##
+## cd ~/Workspace/elixir
+## git clone git@github.com:elixir-lsp/elixir-ls.git
+## MIX_ENV=prod mix elixir_ls.release2 -0 elixir-ls
+## cd release
+## ln -s language_server.sh elixir-ls
+## ./elixir-ls
+## export PATH="$PATH:$HOME/Workspace/elixir/elixir-ls/release"
