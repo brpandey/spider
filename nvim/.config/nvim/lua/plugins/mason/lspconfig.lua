@@ -1,19 +1,27 @@
 return {
 	-- Main LSP Configuration
 	"neovim/nvim-lspconfig",
+	event = { "BufReadPre", "BufNewFile" },
 	dependencies = {
-		-- Automatically install LSPs and related tools to stdpath for Neovim
-		{ "williamboman/mason.nvim", config = true }, -- NOTE: Must be loaded before dependants
-		"williamboman/mason-lspconfig.nvim",
-		"WhoIsSethDaniel/mason-tool-installer.nvim",
-
-		-- Useful status updates for LSP.
-		-- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-		{ "j-hui/fidget.nvim", opts = {} },
-
-		-- Allows extra capabilities provided by nvim-cmp
 		"hrsh7th/cmp-nvim-lsp",
+		--		{ "williamboman/mason.nvim" }, -- NOTE: Must be loaded before dependants
+		"williamboman/mason-lspconfig.nvim",
+		{ "antosha417/nvim-lsp-file-operations", config = true },
+		{ "j-hui/fidget.nvim", opts = {} },
 	},
+	--	"neovim/nvim-lspconfig",
+	--	dependencies = {
+	--		-- Automatically install LSPs and related tools to stdpath for Neovim
+	--		{ "williamboman/mason.nvim", config = true }, -- NOTE: Must be loaded before dependants
+	--		"williamboman/mason-lspconfig.nvim",
+	--
+	--		-- Useful status updates for LSP.
+	--		-- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
+	--		{ "j-hui/fidget.nvim", opts = {} },
+	--
+	--		-- Allows extra capabilities provided by nvim-cmp
+	--		"hrsh7th/cmp-nvim-lsp",
+	--	},
 	config = function()
 		-- Brief aside: **What is LSP?**
 		--
@@ -164,14 +172,66 @@ return {
 		local servers = {
 			clangd = {},
 			gopls = {},
-			-- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
-			--
+			-- hls = {},
+			elixirls = {
+				cmd = { "language_server.sh" },
+				settings = {
+					dialyzerEnabled = true,
+					fetchDeps = false,
+					enableTestLenses = false,
+					suggestSpecs = false,
+				},
+			},
+			zls = {},
 			-- Some languages (like typescript) have entire language plugins that can be useful:
 			--    https://github.com/pmizio/typescript-tools.nvim
 			--
 			-- But for many setups, the LSP (`ts_ls`) will work just fine
 			-- ts_ls = {},
-			--
+			pylsp = {
+				settings = {
+					pylsp = {
+						plugins = {
+							pyflakes = { enabled = false },
+							pycodestyle = { enabled = false },
+							autopep8 = { enabled = false },
+							yapf = { enabled = false },
+							mccabe = { enabled = false },
+							pylsp_mypy = { enabled = false },
+							pylsp_black = { enabled = false },
+							pylsp_isort = { enabled = false },
+						},
+					},
+				},
+			},
+			ruff = {
+				-- Notes on code actions: https://github.com/astral-sh/ruff-lsp/issues/119#issuecomment-1595628355
+				-- Get isort like behavior: https://github.com/astral-sh/ruff/issues/8926#issuecomment-1834048218
+				commands = {
+					RuffAutofix = {
+						function()
+							vim.lsp.buf.execute_command({
+								command = "ruff.applyAutofix",
+								arguments = {
+									{ uri = vim.uri_from_bufnr(0) },
+								},
+							})
+						end,
+						description = "Ruff: Fix all auto-fixable problems",
+					},
+					RuffOrganizeImports = {
+						function()
+							vim.lsp.buf.execute_command({
+								command = "ruff.applyOrganizeImports",
+								arguments = {
+									{ uri = vim.uri_from_bufnr(0) },
+								},
+							})
+						end,
+						description = "Ruff: Format imports",
+					},
+				},
+			},
 			lua_ls = {
 				-- cmd = { ... },
 				-- filetypes = { ... },
@@ -181,30 +241,29 @@ return {
 						completion = {
 							callSnippet = "Replace",
 						},
+						telemetry = { enable = false },
 						-- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-						-- diagnostics = { disable = { 'missing-fields' } },
+						diagnostics = { disable = { "missing-fields" } },
 					},
 				},
 			},
 		}
 
-		-- Ensure the servers and tools above are installed
+		-- ensure the servers and tools above are installed
 		--  To check the current status of installed tools and/or manually install
 		--  other tools, you can run
 		--    :Mason
 		--
 		--  You can press `g?` for help in this menu.
-		require("mason").setup()
+		--	require("mason").setup()
 
 		-- You can add other tools here that you want Mason to install
 		-- for you, so that they are available from within Neovim.
 		local ensure_installed = vim.tbl_keys(servers or {})
-		vim.list_extend(ensure_installed, {
-			"stylua", -- Used to format Lua code
-		})
-		require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
 		require("mason-lspconfig").setup({
+			ensure_installed = ensure_installed,
+			automatic_installation = true,
 			handlers = {
 				function(server_name)
 					local server = servers[server_name] or {}

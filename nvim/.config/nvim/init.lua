@@ -122,7 +122,7 @@ vim.opt.rtp:prepend(lazypath)
 --
 --  To update plugins you can run
 --    :Lazy update
-require("lazy").setup("plugins", {
+require("lazy").setup({{ import = "plugins" }, { import = "plugins.mason" }}, {
 	change_detection = {
 		notify = false,
 	},
