@@ -1,7 +1,7 @@
 # Keep it simple
 
 format = """
-$directory \
+$directory\
 $fill\
 [](fg:black)\
 ${custom.live-clock-icon}\
