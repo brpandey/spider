@@ -1,0 +1,50 @@
+# Keep it simple
+
+format = """
+$directory \
+$fill\
+[](fg:black)\
+${custom.live-clock-icon}\
+$time\
+  [](fg:black)\
+\n$character
+"""
+
+add_newline = true
+
+[line_break]
+disabled = true
+
+[fill]
+symbol = " "
+
+[character]
+success_symbol = "[󰘧](bold white)"
+error_symbol = "[󰘧](bold red)"
+
+[directory]
+format = "[$path](bold bright-blue)"
+truncation_length = 3
+truncation_symbol = "…/"
+home_symbol = "~"
+read_only = " "
+
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
+"~/Workspace" = "WS"
+
+[time]
+disabled = false
+time_format = "%R"
+style = "fg:bright-blue bg:black"
+format = '[$time]($style)'
+
+[custom.live-clock-icon]
+command = 'h="";echo  ${h:$(date +%H)%12:1}'
+description = "Live updating clock icon, changes hourly. Icons can be customized to your liking."
+when = true
+style = "fg:bright-blue bg:black"
+format = "[$output ]($style)"
