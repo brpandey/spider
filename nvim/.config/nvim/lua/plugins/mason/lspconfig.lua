@@ -234,6 +234,26 @@ return {
 					},
 				},
 			},
+			dockerls = {},
+			yamlls = {
+				settings = {
+					yaml = {
+						schemas = {
+							kubernetes = "/*.yaml",
+						},
+					},
+				},
+			},
+			jsonls = {
+				settings = {
+					json = {
+						format = {
+							enable = true,
+						},
+					},
+					validate = { enable = true },
+				},
+			},
 		}
 
 		-- ensure the servers and tools above are installed
