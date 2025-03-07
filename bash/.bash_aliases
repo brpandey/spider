@@ -25,7 +25,6 @@ else
     alias rm='rm -i' # fallback to interactive remove
 fi
 alias mkdir='mkdir -p'
-alias ps='ps auxf'
 alias less='less -R'
 
 # Change directory aliases
