@@ -234,6 +234,7 @@ return {
 					},
 				},
 			},
+			bashls = {},
 			dockerls = {},
 			yamlls = {
 				settings = {

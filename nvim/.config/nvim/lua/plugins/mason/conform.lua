@@ -33,7 +33,7 @@ return {
 				}
 			end,
 			formatters_by_ft = {
-				bash = { "beautysh" },
+				bash = { "beautysh", "shfmt" },
 				html = { "htmlbeautifier" },
 				ruby = { "standardrb" },
 				toml = { "taplo" },
