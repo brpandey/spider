@@ -18,6 +18,7 @@ alias da='date "+%Y-%m-%d %A %T %Z"'
 # aliases to modified commands
 alias cp='cp -i'
 alias mv='mv -i'
+alias bat='batcat'
 
 if command -v trash &>/dev/null; then
     alias rm='trash -v'
