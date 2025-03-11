@@ -19,7 +19,7 @@ install_spacemacs() {
     # if SPACEMACS_LINK exists and is a valid file, don't re-install extra packages
     if [ ! -L "$SPACEMACS_LINK" ]; then
         if ! command_exists $CMD; then
-            ${SUDO_CMD} ${PACK_MGR} install -yq $ADDITIONAL
+            $SUDO_CMD $PACK_MGR update && $SUDO_CMD $PACK_MGR install -yq $ADDITIONAL
             # Note: Uninstall emacs with:
             # sudo apt remove --purge emacs-bin-common emacs-el emacs-gtk
         fi

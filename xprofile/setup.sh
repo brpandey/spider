@@ -9,13 +9,5 @@ source "$SPIDER_PATH/shared.sh"
 
 print_colored "$GREEN" "Setting up $MODULE_NAME (spider) module"
 
-install_packages() {
-    if ! command_exists xcape; then
-        ${SUDO_CMD} ${PACK_MGR} install -yq xcape
-    else
-        print_colored "$YELLOW" "Package already exists, no need to install"
-    fi
-}
-
-install_packages
+install_package "xcape"
 apply_stow $SPIDER_PATH $MODULE_NAME

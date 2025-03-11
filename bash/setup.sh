@@ -19,7 +19,7 @@ install_packages() {
     if [[ -L "$BASH_LINK" ]]; then
         print_colored "$YELLOW" "$BASH_LINK already exists, no need to install extra packages"
     else
-        ${SUDO_CMD} ${PACK_MGR} install -yq $ADDITIONAL
+        $SUDO_CMD $PACK_MGR update && $SUDO_CMD $PACK_MGR install -yq $ADDITIONAL
     fi
 }
 
@@ -50,3 +50,7 @@ install_packages
 install_blesh
 install_zoxide
 apply_stow $SPIDER_PATH $MODULE_NAME
+
+# Run additional dependencies related to bash
+# which are stored separately for modularity
+../starship/setup.sh

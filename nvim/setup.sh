@@ -11,7 +11,7 @@ print_colored "$GREEN" "Setting up $MODULE_NAME (spider) module"
 
 CMD=nvim
 NVIM_TARGET_DIR="/opt"
-ADDITIONAL="npm python3-venv"
+ADDITIONAL="npm python3-venv" # Note: Nvim mason (linting, lsp, formatting, dap) needs npm and python virtual environment
 
 install_neovim() {
     if ! command_exists $CMD; then
