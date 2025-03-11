@@ -25,6 +25,7 @@ if command -v trash &>/dev/null; then
 else
     alias rm='rm -i' # fallback to interactive remove
 fi
+
 alias mkdir='mkdir -p'
 alias less='less -R'
 
@@ -35,22 +36,41 @@ alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
 
-# aliases for multiple directory listing commands
-alias la='ls -Alh'                # show hidden files
-alias ls='ls -aFh --color=always' # add colors and file type extensions
-alias lx='ls -lXBh'               # sort by extension
-alias lk='ls -lSrh'               # sort by size
-alias lc='ls -ltcrh'              # sort by change time
-alias lu='ls -lturh'              # sort by access time
-alias lr='ls -lRh'                # recursive ls
-alias lt='ls -ltrh'               # sort by date
-alias lw='ls -xAh'                # wide listing format
-alias ll='ls -Fls'                # long listing format
-alias labc='ls -lap'              # alphabetical sort
-alias lf="ls -l | egrep -v '^d'"  # files only
-alias ldir="ls -l | egrep '^d'"   # directories only
-alias lla='ls -Al'                # List and Hidden Files
-alias las='ls -A'                 # Hidden Files
+###########################################################
+# eza
+###########################################################
+
+alias ls='eza'    # Use eza instead of ls for basic directory listings
+alias ll='eza -l' # Detailed listing with permissions, owner, and size
+
+alias la='eza -a'  # List all files, including hidden files (those starting with a dot)
+alias lh='eza -lh' # Display file sizes in a human-readable format (KB, MB, etc.)
+
+alias lla='eza -la'  # Detailed listing with permissions, owner, and size
+alias lah='eza -lha' # List all files (including hidden), with detailed info and human-readable sizes
+
+alias l1='eza --oneline' # Display file listing one one column
+
+# Tree-like view (similar to ls -R)
+alias tree='eza --tree'       # Show files and directories in a recursive, tree-like format
+alias treel='eza -l --tree'   # Show long listing files and directories in a recursive, tree-like format
+alias treea='eza -a --tree'   # Show all files w/ long listing file and directories in a recursive, tree-like format
+alias treela='eza -la --tree' # Show all files w/ long listing file and directories in a recursive, tree-like format
+
+alias li='eza --icons' # Show files with icons (useful with terminal font that supports icons)
+
+alias lsd='eza --only-dirs'         # Show only directories, no files
+alias lsdr='eza --only-dirs --tree' # Show only directories and subdirectories recursively
+
+alias lsg='eza --git --grid' # Show files with Git status (added, modified, etc.) if inside a Git repo
+alias lsf='eza --only-files' # Show only files, no directories
+
+alias lse='eza -l --sort=extension' # Sort files by extension
+
+alias lss='eza -l --reverse --sort=size' # Reverse time sort
+alias lss2='eza -l --sort=size'          # Sort files by size, showing the largest files first
+
+alias lst='eza -l --color=always --sort=time' # Display a colorful listing, sorted by file modification time
 
 # Search command line history
 alias h="history | grep "
