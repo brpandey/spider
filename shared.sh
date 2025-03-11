@@ -21,6 +21,22 @@ apply_stow() {
     if ! stow -vt ~ -d $1 $2; then
         print_colored "$RED" "Unable to apply stow properly"
     else
-        print_colored "$GREEN" "Stow run successfully"
+        print_colored "$GREEN" "Stow applied"
+    fi
+}
+
+install_package() {
+    if ! command_exists $1; then
+        $SUDO_CMD $PACK_MGR update && $SUDO_CMD $PACK_MGR install -yq $1
+    else
+        print_colored "$YELLOW" "Package $1 already exists, no need to install"
+    fi
+}
+
+install_package_and_additional() {
+    if ! command_exists $1; then
+        $SUDO_CMD $PACK_MGR update && $SUDO_CMD $PACK_MGR install -yq $1 $2
+    else
+        print_colored "$YELLOW" "Package $1 already exists, no need to install"
     fi
 }
