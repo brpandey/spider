@@ -31,13 +31,3 @@ language-servers = ["elixirls"]
 
 [language-server.elixirls]
 command = "elixir-ls"
-
-## elixir-ls install
-##
-## cd ~/Workspace/elixir
-## git clone git@github.com:elixir-lsp/elixir-ls.git
-## MIX_ENV=prod mix elixir_ls.release2 -0 elixir-ls
-## cd release
-## ln -s language_server.sh elixir-ls
-## ./elixir-ls
-## export PATH="$PATH:$HOME/Workspace/elixir/elixir-ls/release"

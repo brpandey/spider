@@ -161,7 +161,7 @@ return {
 			gopls = {},
 			-- hls = {},
 			elixirls = {
-				cmd = { "language_server.sh" },
+				cmd = { "elixir-ls" },
 				settings = {
 					dialyzerEnabled = true,
 					fetchDeps = false,

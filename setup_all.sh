@@ -13,8 +13,12 @@
 ../spacemacs/setup.sh
 ../helix/setup.sh
 
-# Setup i3 related
+# Window mgr + Terminal multiplexer
 ../i3/setup.sh
 ../tmux/setup.sh
 
+# Terminals
 ../wezterm/setup.sh
+
+# Catch-all
+../custom/setup.sh
