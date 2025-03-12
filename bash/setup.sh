@@ -5,7 +5,7 @@ source "$(dirname "$0")/../shared.sh"
 greeting $0
 
 # Include additional packages for use in the command line
-ADDITIONAL="gawk git make bat trash-cli tldr eza fzf ripgrep ranger"
+ADDITIONAL="gawk git curl wget make bat trash-cli tldr eza fzf ripgrep ranger gnome-tweak-tool"
 BASH_LINK="$HOME/.bashrc"
 BLESH_FPATH="$HOME/.local/share/blesh/ble.sh"
 
