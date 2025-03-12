@@ -1,22 +1,18 @@
 #!/bin/bash
 
-MODULE_PATH=$(dirname "$(realpath "$0")")
-MODULE_NAME=$(basename $MODULE_PATH)
-SPIDER_PATH=$(dirname $MODULE_PATH)
-
 # Pull in shared top-level functions and variables
-source "$SPIDER_PATH/shared.sh"
+source "$(dirname "$0")/../shared.sh"
+greeting $0
 
-print_colored "$GREEN" "Setting up $MODULE_NAME (spider) module"
-
-TRASH_RM=trash
 ELIXIRLS_TARGET="$HOME/.local/share"
 ELIXIRLS_RELEASE="$ELIXIRLS_TARGET/elixir-ls/release"
+ELIXIRLS_GIT_REPO="git@github.com:elixir-lsp/elixir-ls.git"
+NAME="elixir-ls"
 
 install_elixirls() {
-    if [ ! -L $ELIXIRLS_RELEASE/elixir-ls ]; then
-        git -C $ELIXIRLS_TARGET clone git@github.com:elixir-lsp/elixir-ls.git
-        cd "$ELIXIRLS_TARGET/elixir-ls"
+    if [ ! -L "$ELIXIRLS_RELEASE/$NAME" ]; then
+        git -C $ELIXIRLS_TARGET clone $ELIXIRLS_GIT_REPO
+        cd "$ELIXIRLS_TARGET/$NAME"
         print_colored "$GREEN" "About to run mix deps.get to pull down dependencies"
 
         mix deps.get
@@ -31,13 +27,13 @@ install_elixirls() {
         cd $ELIXIRLS_RELEASE
         ls $ELIXIRLS_RELEASE
 
-        print_colored "$GREEN" "Symbolic linking language server sh executable to more concise name: elixir-ls"
-        ln -s $ELIXIRLS_RELEASE/language_server.sh $ELIXIRLS_RELEASE/elixir-ls
+        print_colored "$GREEN" "Symbolic linking language server sh executable to more concise name: $NAME"
+        ln -s $ELIXIRLS_RELEASE/language_server.sh $ELIXIRLS_RELEASE/$NAME
 
-        print_colored "$GREEN" "Running initial invocation of elixir-ls, press <ENTER> when done"
-        $ELIXIRLS_RELEASE/./elixir-ls
+        print_colored "$GREEN" "Running initial invocation of $NAME, press <ENTER> when done"
+        $ELIXIRLS_RELEASE/./$NAME
     else
-        print_colored "$YELLOW" "elixir-ls sh script already exists, no need to re-install"
+        print_colored "$YELLOW" "$NAME sh script already exists, no need to re-install"
     fi
 }
 

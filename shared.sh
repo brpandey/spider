@@ -17,12 +17,25 @@ command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
-apply_stow() {
+greeting() {
+    MODULE_NAME=$(basename $(dirname "$(realpath "$1")"))
+    print_colored "$GREEN" "Setting up $MODULE_NAME (spider) module"
+}
+
+apply_stow2() {
     if ! stow -vt ~ -d $1 $2; then
         print_colored "$RED" "Unable to apply stow properly"
     else
         print_colored "$GREEN" "Stow applied"
     fi
+}
+
+apply_stow() {
+    MODULE_PATH=$(dirname "$(realpath "$1")")
+    MODULE_NAME=$(basename $MODULE_PATH)
+    SPIDER_PATH=$(dirname $MODULE_PATH)
+
+    apply_stow2 $SPIDER_PATH $MODULE_NAME
 }
 
 install_package() {

@@ -1,13 +1,8 @@
 #!/bin/bash
 
-MODULE_PATH=$(dirname "$(realpath "$0")")
-MODULE_NAME=$(basename $MODULE_PATH)
-SPIDER_PATH=$(dirname $MODULE_PATH)
-
 # Pull in shared top-level functions and variables
-source "$SPIDER_PATH/shared.sh"
-
-print_colored "$GREEN" "Setting up $MODULE_NAME (spider) module"
+source "$(dirname "$0")/../shared.sh"
+greeting $0
 
 CMD=emacs
 ADDITIONAL="emacs"
@@ -35,4 +30,4 @@ install_spacemacs() {
 }
 
 install_spacemacs
-apply_stow $SPIDER_PATH $MODULE_NAME
+apply_stow $0
