@@ -22,11 +22,26 @@ greeting() {
     print_colored "$GREEN" "Setting up $MODULE_NAME (spider) module"
 }
 
-apply_stow2() {
-    if ! stow -vt ~ -d $1 $2; then
-        print_colored "$RED" "Unable to apply stow properly"
+stow_check_apply() {
+    local spider_dir="$1" # Directory containing the stow packages
+    local package="$2"    # The specific package to be stowed
+    STOW_SUCCESS_TOKEN="LINK"
+
+    # Run the dry-run command and capture the output,
+    # stow outputs to stderr so switch it to stdout
+    local grep_output=$(stow -nvt ~ -d "$spider_dir" "$package" 2>&1 | grep "$STOW_SUCCESS_TOKEN")
+
+    # Now check if grep found the LINK token indicating success during simulation mode
+    # If found, it means stow can successfully create a symbolic link
+    # So run again without simulate flag
+    if [ -n "$grep_output" ]; then
+        if stow -vt ~ -d "$spider_dir" "$package"; then
+            print_colored "$GREEN" "Stow applied"
+        else
+            print_colored "$RED" "Unable to apply stow properly"
+        fi
     else
-        print_colored "$GREEN" "Stow applied"
+        print_colored "$YELLOW" "Stow already applied, no changes made"
     fi
 }
 
@@ -35,7 +50,7 @@ apply_stow() {
     MODULE_NAME=$(basename $MODULE_PATH)
     SPIDER_PATH=$(dirname $MODULE_PATH)
 
-    apply_stow2 $SPIDER_PATH $MODULE_NAME
+    stow_check_apply $SPIDER_PATH $MODULE_NAME
 }
 
 install_package() {
