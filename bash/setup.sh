@@ -14,7 +14,7 @@ install_packages() {
     if [[ ! -L "$BASH_LINK" ]]; then
         $SUDO_CMD $PACK_MGR update && $SUDO_CMD $PACK_MGR install -yq $ADDITIONAL
     else
-        print_colored "$YELLOW" "$BASH_LINK already exists, no need to install extra packages"
+        print_colored "$YELLOW" "$BASH_LINK already exists"
     fi
 }
 
@@ -26,7 +26,7 @@ install_blesh() {
         git -C $TEMP_DIR clone --recursive --depth 1 --shallow-submodules https://github.com/akinomyoga/ble.sh.git
         cd $TEMP_DIR && make -C ble.sh install PREFIX=~/.local
     else
-        print_colored "$YELLOW" "ble.sh already exists at $BLESH_FPATH"
+        print_colored "$YELLOW" "ble.sh already installed"
     fi
 }
 
@@ -47,6 +47,6 @@ install_zoxide
 
 # Run additional dependencies related to bash
 # which are stored separately for modularity
-../starship/setup.sh
+"$(dirname "$0")/../starship/setup.sh"
 
 apply_stow $0
