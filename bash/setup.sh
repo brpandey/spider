@@ -5,17 +5,13 @@ source "$(dirname "$0")/../shared.sh"
 greeting $0
 
 # Include additional packages for use in the command line
-ADDITIONAL="gawk git curl wget make bat trash-cli tldr eza fzf ripgrep ranger gnome-tweak-tool"
+CLI_TOOLS="gawk git curl wget make bat trash-cli tldr eza fzf ripgrep ranger gnome-tweak-tool"
 BASH_LINK="$HOME/.bashrc"
 BLESH_FPATH="$HOME/.local/share/blesh/ble.sh"
 
-install_packages() {
+install_cli_tools() {
     # if BASH_LINK exists and is a valid file, don't re-install extra packages
-    if [[ ! -L "$BASH_LINK" ]]; then
-        $SUDO_CMD $PACK_MGR update && $SUDO_CMD $PACK_MGR install -yq $ADDITIONAL
-    else
-        print_colored "$YELLOW" "$BASH_LINK already exists"
-    fi
+    check_link_install_additional "$BASH_LINK" "$CLI_TOOLS"
 }
 
 # fish is really cool, but bash also has ble.sh
@@ -41,12 +37,12 @@ install_zoxide() {
     fi
 }
 
-install_packages
+install_cli_tools
 install_blesh
 install_zoxide
 
 # Run additional dependencies related to bash
 # which are stored separately for modularity
-"$(dirname "$0")/../starship/setup.sh"
+run_peer_dependency_sh $0 "starship/setup.sh"
 
 apply_stow $0

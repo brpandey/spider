@@ -4,10 +4,13 @@
 source "$(dirname "$0")/../shared.sh"
 greeting $0
 
+CMD="hx"
+
 install_helix() {
-    if ! command_exists hx; then
+    if ! command_exists $CMD; then
+        print_colored "$GREEN" "Adding helix ppa"
         $SUDO_CMD add-apt-repository ppa:maveonair/helix-editor
-        $SUDO_CMD $PACK_MGR update && $SUDO_CMD $PACK_MGR install -yq helix
+        check_cmd_install_additional $CMD "helix"
     else
         print_colored "$YELLOW" "Package helix already exists, no need to install"
     fi

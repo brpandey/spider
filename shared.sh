@@ -22,6 +22,12 @@ greeting() {
     print_colored "$GREEN" "Setting up $MODULE_NAME (spider) module"
 }
 
+# Run additional dependencies from peer spider module directory bash script
+# E.g. run_peer_dependency_sh $0 "starship/setup.sh"
+run_peer_dependency_sh() {
+    "$(dirname "$(realpath "$1")")/../"$2""
+}
+
 stow_check_apply() {
     local spider_dir="$1" # Directory containing the stow packages
     local package="$2"    # The specific package to be stowed
@@ -34,7 +40,7 @@ stow_check_apply() {
     # Now check if grep found the LINK token indicating success during simulation mode
     # If found, it means stow can successfully create a symbolic link
     # So run again without simulate flag
-    if [ -n "$grep_output" ]; then
+    if [[ -n "$grep_output" ]]; then
         if stow -vt ~ -d "$spider_dir" "$package"; then
             print_colored "$GREEN" "Stow applied"
         else
@@ -53,6 +59,7 @@ apply_stow() {
     stow_check_apply $SPIDER_PATH $MODULE_NAME
 }
 
+# installs single package (and also command) $1
 install_package() {
     if ! command_exists $1; then
         $SUDO_CMD $PACK_MGR update && $SUDO_CMD $PACK_MGR install -yq $1
@@ -61,10 +68,29 @@ install_package() {
     fi
 }
 
+# installs package (and also command) $1, and additional $2
 install_package_and_additional() {
     if ! command_exists $1; then
         $SUDO_CMD $PACK_MGR update && $SUDO_CMD $PACK_MGR install -yq $1 $2
     else
-        print_colored "$YELLOW" "Package $1 already exists, no need to install"
+        print_colored "$YELLOW" "Package $1 already exists, no need to install additional $2"
+    fi
+}
+
+# check cmd $1, if not found install additional $2
+check_cmd_install_additional() {
+    if ! command_exists $1; then
+        $SUDO_CMD $PACK_MGR update && $SUDO_CMD $PACK_MGR install -yq $2
+    else
+        print_colored "$YELLOW" "Cmd $1 already exists, no need to install additional $2"
+    fi
+}
+
+# check link $1, if not found install additional
+check_link_install_additional() {
+    if [[ ! -L $1 ]]; then
+        $SUDO_CMD $PACK_MGR update && $SUDO_CMD $PACK_MGR install -yq $2
+    else
+        print_colored "$YELLOW" "Link $1 already exists, no need to install additional $2"
     fi
 }

@@ -4,8 +4,7 @@
 source "$(dirname "$0")/../shared.sh"
 greeting $0
 
-CMD=emacs
-ADDITIONAL="emacs"
+EMACS="emacs"
 SPACEMACS_LINK="$HOME/.spacemacs"
 SPACEMACS_URL="https://github.com/syl20bnr/spacemacs"
 SPACEMACS_TARGET="$HOME/.emacs.d"
@@ -13,11 +12,9 @@ SPACEMACS_TARGET="$HOME/.emacs.d"
 install_spacemacs() {
     # if SPACEMACS_LINK exists and is a valid file, don't re-install extra packages
     if [ ! -L "$SPACEMACS_LINK" ]; then
-        if ! command_exists $CMD; then
-            $SUDO_CMD $PACK_MGR update && $SUDO_CMD $PACK_MGR install -yq $ADDITIONAL
-            # Note: Uninstall emacs with:
-            # sudo apt remove --purge emacs-bin-common emacs-el emacs-gtk
-        fi
+        install_package $EMACS
+        # Note: Uninstall emacs with:
+        # sudo apt remove --purge emacs-bin-common emacs-el emacs-gtk
 
         # Move existing emacs config to backup
         mv "$HOME/.emacs" "$HOME.emacs.bak"

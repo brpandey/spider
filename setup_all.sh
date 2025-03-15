@@ -1,24 +1,25 @@
 #!/bin/bash
 
 # Run all modules in proper order
+PREFIX="$(dirname "$0")"
 
-"$(dirname "$0")/fonts/setup.sh"
-"$(dirname "$0")/xprofile/setup.sh"
+"$PREFIX/fonts/setup.sh"
+"$PREFIX/xprofile/setup.sh"
 
 # Setup bash customization
-"$(dirname "$0")/bash/setup.sh"
+"$PREFIX/bash/setup.sh"
 
 # Editors
-"$(dirname "$0")/nvim/setup.sh"
-"$(dirname "$0")/spacemacs/setup.sh"
-"$(dirname "$0")/helix/setup.sh"
+"$PREFIX/nvim/setup.sh"
+"$PREFIX/spacemacs/setup.sh"
+"$PREFIX/helix/setup.sh"
 
 # Window mgr + Terminal multiplexer
-"$(dirname "$0")/i3/setup.sh"
-"$(dirname "$0")/tmux/setup.sh"
+"$PREFIX/i3/setup.sh"
+"$PREFIX/tmux/setup.sh"
 
 # Terminals
-"$(dirname "$0")/wezterm/setup.sh"
+"$PREFIX/wezterm/setup.sh"
 
 # Catch-all
-"$(dirname "$0")/custom/setup.sh"
+"$PREFIX/custom/setup.sh"

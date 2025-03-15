@@ -5,8 +5,10 @@ source "$(dirname "$0")/../shared.sh"
 greeting $0
 
 update_font_cache() {
-    fc-cache -fv
+    if [ -L "$HOME/.fonts" ]; then
+        fc-cache -f # optionally can add -fv as well for verbose
+    fi
 }
 
-update_font_cache
 apply_stow $0
+update_font_cache
