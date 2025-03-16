@@ -4,19 +4,71 @@
 source "$(dirname "$0")/../shared.sh"
 greeting $0
 
-ELIXIRLS_TARGET="$HOME/.local/share"
-ELIXIRLS_RELEASE="$ELIXIRLS_TARGET/elixir-ls/release"
-ELIXIRLS_GIT_REPO="git@github.com:elixir-lsp/elixir-ls.git"
-NAME="elixir-ls"
+install_docker() {
+    local cmd="docker"
+    local group_name="docker"
+    local additional1="apt-transport-https ca-certificates curl software-properties-common"
+    local additional2="docker-ce docker-ce-cli containerd.io"
+    local key_url="https://download.docker.com/linux/ubuntu/gpg"
+    local key_url2="https://download.docker.com/linux/ubuntu"
+    local key_path="/usr/share/keyrings/docker-archive-keyring.gpg"
+
+    local sources_path="/etc/apt/sources.list.d/docker.list"
+
+    # install additional1 if docker cmd is not present
+    check_cmd_install_additional "$cmd" "$additional1"
+
+    print_colored "$GREEN" "Adding docker gpg key\n"
+
+    # add docker gpg key
+    if ! curl -fsSL $key_url | sudo gpg --dearmor -o $key_path; then
+        print_colored "$RED" "Something went wrong during curl of $key_url install or gpg dearmor!"
+        exit 1
+    fi
+
+    # add docker repo
+    echo "deb [arch=$(dpkg --print-architecture) signed-by="$key_path"] "$key_url2" $(lsb_release -cs) stable" | sudo tee "$sources_path" >/dev/null
+
+    print_colored "$GREEN" "Adding docker repo\n"
+
+    # install additional2 if docker cmd is not present
+    check_cmd_install_additional "$cmd" "$additional2"
+
+    # Manage docker as non-root user
+    # Create docker group
+    # https://docs.docker.com/engine/install/linux-postinstall/
+    print_colored "$GREEN" "Adding group docker and adding current user to docker group, so docker can be managed as non-root user\n"
+    print_colored "$GREEN" "Press <Enter> if group already exists"
+
+    $SUDO_CMD groupadd "$group_name"
+    $SUDO_CMD usermod -aG "$group_name" $(whoami)
+    newgrp "$group_name" # Activate the changes to the group (rather than having to log back in)
+
+    print_colored "$GREEN" "Turning off docker autostart on boot up"
+
+    # Turn off autostart on boot (for Debian and Ubuntu)
+    $SUDO_CMD systemctl disable docker.service
+    $SUDO_CMD systemctl disable docker.socket
+    $SUDO_CMD systemctl disable containerd.service
+
+    local output=$($SUDO_CMD $cmd "--version")
+    echo $output
+    print_colored "$GREEN" "$output"
+}
 
 install_elixirls() {
-    if [ ! -L "$ELIXIRLS_RELEASE/$NAME" ]; then
-        git -C $ELIXIRLS_TARGET clone $ELIXIRLS_GIT_REPO
-        cd "$ELIXIRLS_TARGET/$NAME"
+    local target_path="$HOME/.local/share"
+    local release_path="$target_path/elixir-ls/release"
+    local git_repo="git@github.com:elixir-lsp/elixir-ls.git"
+    local name="elixir-ls"
+
+    if [ ! -L "$release_path/$name" ]; then
+        git -C $target_path clone $git_repo
+        cd "$target_path/$name"
         print_colored "$GREEN" "About to run mix deps.get to pull down dependencies"
 
         mix deps.get
-        mkdir $ELIXIRLS_RELEASE
+        mkdir $release_path
         print_colored "$GREEN" "Created release directory"
 
         export MIX_ENV=prod
@@ -24,18 +76,20 @@ install_elixirls() {
         mix elixir_ls.release2 -0 elixir-ls
         env | grep MIX_ENV
 
-        cd $ELIXIRLS_RELEASE
-        ls $ELIXIRLS_RELEASE
+        cd $release_path
+        ls $release_path
 
-        print_colored "$GREEN" "Symbolic linking language server sh executable to more concise name: $NAME"
-        ln -s $ELIXIRLS_RELEASE/language_server.sh $ELIXIRLS_RELEASE/$NAME
+        print_colored "$GREEN" "Symbolic linking language server sh executable to more concise name: $name"
+        ln -s $release_path/language_server.sh $release_path/$name
 
-        print_colored "$GREEN" "Running initial invocation of $NAME, press <ENTER> when done"
-        $ELIXIRLS_RELEASE/./$NAME
+        print_colored "$GREEN" "Running initial invocation of $name, press <ENTER> when done"
+        $release_path/./$name
     else
-        print_colored "$YELLOW" "$NAME sh script already exists, no need to re-install"
+        print_colored "$YELLOW" "$name sh script already exists, no need to re-install"
     fi
 }
+
+install_docker
 
 # Install Elixir language server since Helix (and apparently Neovim now can) doesn't seem to be able to do so automatically
 install_elixirls
