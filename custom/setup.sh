@@ -111,6 +111,26 @@ install_elixirls() {
     fi
 }
 
+install_github_desktop() {
+    local cmd="github-desktop"
+    local key_url="https://apt.packages.shiftkey.dev/gpg.key"
+    local key_url2="https://apt.packages.shiftkey.dev/ubuntu/"
+    local key_path="/usr/share/keyrings/shiftkey-packages.gpg"
+
+    if ! command_exists $cmd; then
+        if ! wget -qO - $key_url | gpg --dearmor | sudo tee $key_path >/dev/null; then
+            print_colored "$RED" "Something went wrong during wget of "$key_url" install or gpg dearmor!"
+            exit 1
+        fi
+        # sudo sh -c 'echo "deb [arch=amd64 signed-by="$key_path"] "$key_url2" any main" > /etc/apt/sources.list.d/shiftkey-packages.list'
+        sudo sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/shiftkey-packages.gpg] https://apt.packages.shiftkey.dev/ubuntu/ any main" > /etc/apt/sources.list.d/shiftkey-packages.list'
+
+        install_package $cmd
+    else
+        print_colored "$YELLOW" "Package $cmd already exists, no need to install"
+    fi
+}
+
 install_docker
 
 # Install Elixir language server since Helix (and apparently Neovim now can) doesn't seem to be able to do so automatically
@@ -118,5 +138,7 @@ install_elixirls
 
 # Install Rust-based uv
 install_fast_python_manager
+
+install_github_desktop
 
 # Not stowing at this time, just installing
