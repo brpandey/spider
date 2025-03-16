@@ -4,6 +4,24 @@
 source "$(dirname "$0")/../shared.sh"
 greeting $0
 
+install_fast_python_manager() {
+    local install_url="https://astral.sh/uv/install.sh"
+    local cmd="uv"
+
+    if ! command_exists $cmd; then
+        if ! curl -LsSf $install_url | sh; then
+            print_colored "$RED" "Something went wrong during curl of $cmd install!"
+            exit 1
+        fi
+
+        local output=$($cmd "--version")
+        echo $output
+        print_colored "$GREEN" "$output"
+    else
+        print_colored "$YELLOW" "Package $cmd already exists, no need to reinstall"
+    fi
+}
+
 install_docker() {
     local cmd="docker"
     local group_name="docker"
@@ -15,45 +33,49 @@ install_docker() {
 
     local sources_path="/etc/apt/sources.list.d/docker.list"
 
-    # install additional1 if docker cmd is not present
-    check_cmd_install_additional "$cmd" "$additional1"
+    if ! command_exists $cmd; then
+        # install additional1 if docker cmd is not present
+        check_cmd_install_additional "$cmd" "$additional1"
 
-    print_colored "$GREEN" "Adding docker gpg key\n"
+        print_colored "$GREEN" "Adding docker gpg key\n"
 
-    # add docker gpg key
-    if ! curl -fsSL $key_url | sudo gpg --dearmor -o $key_path; then
-        print_colored "$RED" "Something went wrong during curl of $key_url install or gpg dearmor!"
-        exit 1
+        # add docker gpg key
+        if ! curl -fsSL $key_url | sudo gpg --dearmor -o $key_path; then
+            print_colored "$RED" "Something went wrong during curl of $key_url install or gpg dearmor!"
+            exit 1
+        fi
+
+        # add docker repo
+        echo "deb [arch=$(dpkg --print-architecture) signed-by="$key_path"] "$key_url2" $(lsb_release -cs) stable" | sudo tee "$sources_path" >/dev/null
+
+        print_colored "$GREEN" "Adding docker repo\n"
+
+        # install additional2 if docker cmd is not present
+        check_cmd_install_additional "$cmd" "$additional2"
+
+        # Manage docker as non-root user
+        # Create docker group
+        # https://docs.docker.com/engine/install/linux-postinstall/
+        print_colored "$GREEN" "Adding group docker and adding current user to docker group, so docker can be managed as non-root user\n"
+        print_colored "$GREEN" "Press <Enter> if group already exists"
+
+        $SUDO_CMD groupadd "$group_name"
+        $SUDO_CMD usermod -aG "$group_name" $(whoami)
+        newgrp "$group_name" # Activate the changes to the group (rather than having to log back in)
+
+        print_colored "$GREEN" "Turning off docker autostart on boot up"
+
+        # Turn off autostart on boot (for Debian and Ubuntu)
+        $SUDO_CMD systemctl disable docker.service
+        $SUDO_CMD systemctl disable docker.socket
+        $SUDO_CMD systemctl disable containerd.service
+
+        local output=$($cmd "--version")
+        echo $output
+        print_colored "$GREEN" "$output"
+    else
+        print_colored "$YELLOW" "Package $cmd already exists, no need to reinstall"
     fi
-
-    # add docker repo
-    echo "deb [arch=$(dpkg --print-architecture) signed-by="$key_path"] "$key_url2" $(lsb_release -cs) stable" | sudo tee "$sources_path" >/dev/null
-
-    print_colored "$GREEN" "Adding docker repo\n"
-
-    # install additional2 if docker cmd is not present
-    check_cmd_install_additional "$cmd" "$additional2"
-
-    # Manage docker as non-root user
-    # Create docker group
-    # https://docs.docker.com/engine/install/linux-postinstall/
-    print_colored "$GREEN" "Adding group docker and adding current user to docker group, so docker can be managed as non-root user\n"
-    print_colored "$GREEN" "Press <Enter> if group already exists"
-
-    $SUDO_CMD groupadd "$group_name"
-    $SUDO_CMD usermod -aG "$group_name" $(whoami)
-    newgrp "$group_name" # Activate the changes to the group (rather than having to log back in)
-
-    print_colored "$GREEN" "Turning off docker autostart on boot up"
-
-    # Turn off autostart on boot (for Debian and Ubuntu)
-    $SUDO_CMD systemctl disable docker.service
-    $SUDO_CMD systemctl disable docker.socket
-    $SUDO_CMD systemctl disable containerd.service
-
-    local output=$($SUDO_CMD $cmd "--version")
-    echo $output
-    print_colored "$GREEN" "$output"
 }
 
 install_elixirls() {
@@ -93,5 +115,8 @@ install_docker
 
 # Install Elixir language server since Helix (and apparently Neovim now can) doesn't seem to be able to do so automatically
 install_elixirls
+
+# Install Rust-based uv
+install_fast_python_manager
 
 # Not stowing at this time, just installing

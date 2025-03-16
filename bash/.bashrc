@@ -143,3 +143,9 @@ eval "$(starship init bash)"
 eval "$(zoxide init bash)"
 
 source "$HOME/.local/share/blesh/ble.sh" # syntax highlight, autocompletion
+
+# uv env
+eval "$(uv generate-shell-completion bash)"
+eval "$(uvx --generate-shell-completion bash)"
+
+. "$HOME/.local/share/../bin/env"
