@@ -1,0 +1,5 @@
+setup.sh
+docker-dns-fix.conf
+compose-yaml
+data
+.gitignore

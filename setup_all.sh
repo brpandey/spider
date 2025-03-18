@@ -21,5 +21,8 @@ PREFIX="$(dirname "$0")"
 # Terminals
 "$PREFIX/wezterm/setup.sh"
 
+# Docker
+"$PREFIX/docker/setup.sh"
+
 # Catch-all
 "$PREFIX/custom/setup.sh"

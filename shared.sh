@@ -1,9 +1,13 @@
 #!/bin/bash
 
+# https://www.linuxcommand.org/lc3_adv_tput.php
 RC=$(tput sgr0)
 RED=$(tput setaf 1)
 YELLOW=$(tput setaf 3)
 GREEN=$(tput setaf 2)
+BLUE=$(tput setaf 4)
+MAGENTA=$(tput setaf 5)
+CYAN=$(tput setaf 6)
 
 SUDO_CMD="sudo"
 PACK_MGR="apt"
