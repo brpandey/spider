@@ -46,7 +46,6 @@ install_docker() {
         print_colored "$GREEN" "Adding group docker and adding current user to docker group, so docker can be managed as non-root user\n"
         print_colored "$GREEN" "Press <Enter> if group already exists"
 
-        #        $SUDO_CMD groupadd "$group_name"
         $SUDO_CMD usermod -aG "$group_name" $(whoami)
         newgrp "$group_name" # Activate the changes to the group (rather than having to log back in)
     fi
@@ -65,7 +64,6 @@ install_docker() {
 
         # Allows containers to resolve DNS from whatever DNS servers the host machine is using.
         # force copy docker-dns-fix.conf to /etc/dnsmasq.d
-        # mkdir $dnsmasq_config
         $SUDO_CMD \cp "$(dirname "$0")/$docker_dns_fix_file" "$dnsmasq_config/"
         $SUDO_CMD service dnsmasq restart
 
