@@ -14,7 +14,7 @@ PACK_MGR="apt"
 
 # Helper functions
 print_colored() {
-    printf "${1}%s${RC}\n" "$2"
+    printf "\n${1}%s${RC}\n" "$2"
 }
 
 command_exists() {
