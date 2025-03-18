@@ -60,14 +60,15 @@ install_github_desktop() {
     local key_url="https://apt.packages.shiftkey.dev/gpg.key"
     local key_url2="https://apt.packages.shiftkey.dev/ubuntu/"
     local key_path="/usr/share/keyrings/shiftkey-packages.gpg"
+    local sources_path="/etc/apt/sources.list.d/shiftkey-packages.list"
 
     if ! command_exists $cmd; then
-        if ! wget -qO - $key_url | gpg --dearmor | sudo tee $key_path >/dev/null; then
+        if ! wget -qO - $key_url | gpg --dearmor | $SUDO_CMD tee $key_path >/dev/null; then
             print_colored "$RED" "Something went wrong during wget of "$key_url" install or gpg dearmor!"
             exit 1
         fi
-        # sudo sh -c 'echo "deb [arch=amd64 signed-by="$key_path"] "$key_url2" any main" > /etc/apt/sources.list.d/shiftkey-packages.list'
-        sudo sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/shiftkey-packages.gpg] https://apt.packages.shiftkey.dev/ubuntu/ any main" > /etc/apt/sources.list.d/shiftkey-packages.list'
+
+        echo "deb [arch=$(dpkg --print-architecture) signed-by="$key_path"] "$key_url2" any main" | $SUDO_CMD tee "$sources_path" >/dev/null
 
         install_package $cmd
     else
