@@ -114,10 +114,10 @@ function whatsmyip() {
     # Internal IP Lookup.
     if command -v ip &>/dev/null; then
         echo -n "Internal IP: "
-        ip addr show wlan0 | grep "inet " | awk '{print $2}' | cut -d/ -f1
+        ip addr show wlo1 | grep "inet " | awk '{print $2}' | cut -d/ -f1
     else
         echo -n "Internal IP: "
-        ifconfig wlan0 | grep "inet " | awk '{print $2}'
+        ifconfig wlo1 | grep "inet " | awk '{print $2}'
     fi
 
     # External IP Lookup
