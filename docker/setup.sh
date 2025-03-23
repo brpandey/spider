@@ -73,6 +73,7 @@ install_docker() {
         # force copy docker-dns-fix.conf to /etc/dnsmasq.d
         $SUDO_CMD \cp -v "$(dirname "$0")/$docker_dns_fix_file" "$dnsmasq_config/"
         $SUDO_CMD service dnsmasq restart
+        dstop
 
         print_colored "$MAGENTA" "To start/stop docker run: dstart/dstop"
     fi
