@@ -6,7 +6,7 @@ greeting $0
 
 install_starship() {
     if ! command_exists starship; then
-        if ! curl -sS https://starship.rs/install.sh | sh; then
+        if ! curl -fsSL https://starship.rs/install.sh | sh; then
             print_colored "$RED" "Something went wrong during starship install!"
             exit 1
         fi
