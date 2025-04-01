@@ -149,3 +149,4 @@ eval "$(uv generate-shell-completion bash)"
 eval "$(uvx --generate-shell-completion bash)"
 
 . "$HOME/.local/share/../bin/env"
+. "$HOME/.cargo/env"

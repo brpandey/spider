@@ -134,7 +134,7 @@ alias dkill='docker kill $(docker ps -aq) > /dev/null 2>&1'
 alias dremove='docker rm -f $(docker ps -aq) > /dev/null 2>&1'
 
 alias dstatus='sudo systemctl status docker'
-alias dps='docker ps'
+alias dps='docker ps -a'
 
 alias livebook='/home/brpandey/.asdf/installs/elixir/1.15.3-otp-26/.mix/escripts/livebook'
 

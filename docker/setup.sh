@@ -44,15 +44,22 @@ install_docker() {
     fi
 
     if $SUDO_CMD groupadd "$group_name" >/dev/null 2>&1; then
-        # Manage docker as non-root user
         # Create docker group
         # https://docs.docker.com/engine/install/linux-postinstall/
-        print_colored "$GREEN" "Adding group docker and adding current user to docker group, so docker can be managed as non-root user\n"
+        print_colored "$GREEN" "Adding group docker \n"
 
-        $SUDO_CMD usermod -aG "$group_name" $(whoami)
-        newgrp "$group_name" # Activate the changes to the group (rather than having to log back in)
     else
         print_colored "$YELLOW" "Group docker already exists"
+    fi
+
+    if ! id -nG $(whoami) | grep -qw "$group_name"; then
+        # Manage docker as non-root user
+        print_colored "$GREEN" "Adding current user to docker group, so docker can be managed as non-root user"
+        $SUDO_CMD usermod -aG "$group_name" $(whoami)
+        print_colored "$GREEN" "Type \"exit\" - as new changes to group have been activated"
+        newgrp "$group_name" # Activate the changes to the group (rather than having to log back in)
+    else
+        print_colored "$YELLOW" "User already added to Group docker"
     fi
 
     if $newly_installed; then
@@ -73,7 +80,7 @@ install_docker() {
         # force copy docker-dns-fix.conf to /etc/dnsmasq.d
         $SUDO_CMD \cp -v "$(dirname "$0")/$docker_dns_fix_file" "$dnsmasq_config/"
         $SUDO_CMD service dnsmasq restart
-        dstop
+        $SUDO_CMD systemctl stop docker
 
         print_colored "$MAGENTA" "To start/stop docker run: dstart/dstop"
     fi
