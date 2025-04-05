@@ -11,7 +11,7 @@ config.font = wezterm.font("Fantasque Sans Mono")
 config.font_size = 13
 config.line_height = 1.2
 
-config.hide_tab_bar_if_only_one_tab = true
+config.hide_tab_bar_if_only_one_tab = false
 config.window_padding = {
 	left = 4,
 	right = 2,
@@ -19,8 +19,7 @@ config.window_padding = {
 	bottom = "0px",
 }
 config.window_decorations = "RESIZE"
-config.window_background_opacity = 0.9
-config.macos_window_background_blur = 10
+config.window_background_opacity = 0.7
 
 -- config.keys = {
 -- 	{

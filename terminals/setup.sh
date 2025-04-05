@@ -5,4 +5,7 @@ source "$(dirname "$0")/../shared.sh"
 greeting $0
 
 install_package "wezterm"
+install_package "kitty"
 apply_stow $0
+
+

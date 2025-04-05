@@ -19,7 +19,7 @@ PREFIX="$(dirname "$0")"
 "$PREFIX/tmux/setup.sh"
 
 # Terminals
-"$PREFIX/wezterm/setup.sh"
+"$PREFIX/terminals/setup.sh"
 
 # Docker
 "$PREFIX/docker/setup.sh"
