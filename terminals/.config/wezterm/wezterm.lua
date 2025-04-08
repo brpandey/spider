@@ -8,7 +8,7 @@ config.color_scheme = "Galaxy"
 config.font = wezterm.font("Fantasque Sans Mono")
 -- config.font = wezterm.font("MesloLGS NF")
 
-config.font_size = 13
+config.font_size = 12
 config.line_height = 1.2
 
 config.hide_tab_bar_if_only_one_tab = false
