@@ -159,7 +159,7 @@ return {
 		local servers = {
 			clangd = {},
 			gopls = {},
-			-- hls = {},
+			hls = {},
 			elixirls = {
 				cmd = { "elixir-ls" },
 				settings = {

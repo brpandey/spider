@@ -150,3 +150,5 @@ eval "$(uvx --generate-shell-completion bash)"
 
 . "$HOME/.local/share/../bin/env"
 . "$HOME/.cargo/env"
+
+[ -f "/home/brpandey/.ghcup/env" ] && . "/home/brpandey/.ghcup/env" # ghcup-env
