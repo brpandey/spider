@@ -13,7 +13,7 @@ ELIXIR_VERSION="1.15.3-otp-26"
 setup_asdf_and_prerequisites() {
     # Install prerequisites only if Erlang or Elixir not installed via asdf
     if ! command -v asdf >/dev/null 2>&1 ||
-        ! asdf global erlang >/dev/null 2>&1 && ! asdf global elixir >/dev/null 2>&1; then
+        ! asdf current erlang >/dev/null 2>&1 && ! asdf current elixir >/dev/null 2>&1; then
         echo "Installing prerequisites..."
         sudo apt update
         sudo apt install -y \
@@ -59,17 +59,8 @@ install_erlang_and_elixir() {
     asdf global elixir "$ELIXIR_VERSION"
 }
 
-verify_installation() {
-    echo "✅ Verifying installations..."
-    echo "Erlang version: $(erl -eval 'erlang:display(erlang:system_info(otp_release)), halt().' -noshell)"
-    echo "Elixir version: $(elixir --version | head -n 1)"
-    echo "asdf versions installed:"
-    asdf list
-}
-
 setup_asdf_and_prerequisites
 install_erlang_and_elixir
-verify_installation
 
 #install_phoenix
 
@@ -109,5 +100,99 @@ install_rust() {
 }
 
 install_rust
+
+install_go() {
+    set -e
+
+    GO_VERSION="1.26.1"
+    ARCH="linux-amd64"
+    INSTALL_DIR="/usr/local/go"
+
+    echo "Checking for existing Go installation..."
+
+    if command -v go >/dev/null 2>&1; then
+        CURRENT_VERSION=$(go version | awk '{print $3}')
+        echo "Found Go: $CURRENT_VERSION"
+
+        if [ "$CURRENT_VERSION" = "go$GO_VERSION" ]; then
+            echo "Go $GO_VERSION is already installed. Skipping."
+            return 0
+        else
+            echo "Different version detected. Upgrading to $GO_VERSION..."
+        fi
+    else
+        echo "Go not found. Installing..."
+    fi
+
+    cd /tmp
+    curl -LO https://go.dev/dl/go${GO_VERSION}.${ARCH}.tar.gz
+
+    sudo rm -rf "$INSTALL_DIR"
+    sudo tar -C /usr/local -xzf go${GO_VERSION}.${ARCH}.tar.gz
+
+    export PATH=$PATH:/usr/local/go/bin
+    echo "Installed Go version:"
+    go version
+
+    echo "Restart shell or run: source ~/.bashrc"
+}
+
+install_go
+
+install_haskell() {
+    set -e
+
+    echo "Checking for existing Haskell toolchain..."
+
+    if command -v ghcup >/dev/null 2>&1; then
+        echo "GHCup already installed."
+        source "$HOME/.ghcup/env"
+    else
+        echo "GHCup not found. Installing..."
+        curl https://get-ghcup.haskell.org -sSf | BOOTSTRAP_HASKELL_NONINTERACTIVE=1 sh
+        source "$HOME/.ghcup/env"
+    fi
+
+    # Check GHC
+    if command -v ghc >/dev/null 2>&1; then
+        echo "GHC already installed: $(ghc --version)"
+    else
+        echo "Installing GHC..."
+        ghcup install ghc
+        ghcup set ghc latest
+    fi
+
+    # Check cabal
+    if command -v cabal >/dev/null 2>&1; then
+        echo "cabal already installed: $(cabal --version | head -n 1)"
+    else
+        echo "Installing cabal..."
+        ghcup install cabal
+        ghcup set cabal latest
+    fi
+
+    # Check HLS
+    if command -v haskell-language-server >/dev/null 2>&1; then
+        echo "Haskell Language Server already installed."
+    else
+        echo "Installing HLS..."
+        ghcup install hls
+        ghcup set hls latest
+    fi
+
+    # Create unversioned symlink for convenience
+    if [ ! -f "$HOME/.ghcup/bin/haskell-language-server" ]; then
+        ln -s "$HOME/.ghcup/bin/haskell-language-server-wrapper" "$HOME/.ghcup/bin/haskell-language-server"
+    fi
+
+    echo "Final versions:"
+    ghc --version
+    cabal --version
+    haskell-language-server --version
+
+    echo "Done. Restart shell or run: source ~/.ghcup/env"
+}
+
+install_haskell
 
 # Not stowing at this time, just installing

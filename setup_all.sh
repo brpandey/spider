@@ -24,11 +24,12 @@ PREFIX="$(dirname "$0")"
 # Terminals
 "$PREFIX/terminals/setup.sh"
 
+# Commented out these sections to allow these to be run later and individually as needed
 # Languages
-"$PREFIX/languages/setup.sh"
+# "$PREFIX/languages/setup.sh"
 
 # Dev Tools
-"$PREFIX/dev-tools/setup.sh"
+# "$PREFIX/dev-tools/setup.sh"
 
 # Docker
-"$PREFIX/docker/setup.sh"
+# "$PREFIX/docker/setup.sh"

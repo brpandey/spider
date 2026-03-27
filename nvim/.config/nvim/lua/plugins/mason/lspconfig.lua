@@ -147,6 +147,12 @@ return {
 		local capabilities = vim.lsp.protocol.make_client_capabilities()
 		capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
+		-- Make sure lspconfig is loaded first
+		local ok, lspconfig = pcall(require, "lspconfig")
+		if not ok then
+			vim.notify("nvim-lspconfig is not installed!", vim.log.levels.ERROR)
+			return
+		end
 		-- Enable the following language servers
 		--  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
 		--
@@ -159,7 +165,16 @@ return {
 		local servers = {
 			clangd = {},
 			gopls = {},
-			hls = {},
+			hls = {
+				cmd = { "haskell-language-server-wrapper" },
+				filetypes = { "haskell", "lhaskell" },
+				root_dir = lspconfig.util.root_pattern("*.cabal", "stack.yaml", "cabal.project", "hie.yaml"),
+				settings = {
+					haskell = {
+						formattingProvider = "ormolu", -- or "brittany", "stylish-haskell"
+					},
+				},
+			},
 			elixirls = {
 				cmd = { "elixir-ls" },
 				settings = {
