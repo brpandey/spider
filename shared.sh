@@ -37,6 +37,8 @@ stow_check_apply() {
     local package="$2"    # The specific package to be stowed
     STOW_SUCCESS_TOKEN="LINK"
 
+    install_package_only "stow"
+
     # Run the dry-run command and capture the output,
     # stow outputs to stderr so switch it to stdout
     local grep_output=$(stow -nvt ~ -d "$spider_dir" "$package" 2>&1 | grep "$STOW_SUCCESS_TOKEN")
@@ -63,10 +65,17 @@ apply_stow() {
     stow_check_apply $SPIDER_PATH $MODULE_NAME
 }
 
+# installs single package (and also command) $1 without extra msg
+install_package_only() {
+    if ! command_exists $1; then
+        $SUDO_CMD $PACK_MGR update && $SUDO_CMD $PACK_MGR install -y $1
+    fi
+}
+
 # installs single package (and also command) $1
 install_package() {
     if ! command_exists $1; then
-        $SUDO_CMD $PACK_MGR update && $SUDO_CMD $PACK_MGR install -yq $1
+        $SUDO_CMD $PACK_MGR update && $SUDO_CMD $PACK_MGR install -y $1
     else
         print_colored "$YELLOW" "Package $1 already exists, no need to install"
     fi
@@ -75,7 +84,7 @@ install_package() {
 # installs package (and also command) $1, and additional $2
 install_package_and_additional() {
     if ! command_exists $1; then
-        $SUDO_CMD $PACK_MGR update && $SUDO_CMD $PACK_MGR install -yq $1 $2
+        $SUDO_CMD $PACK_MGR update && $SUDO_CMD $PACK_MGR install -y $1 $2
     else
         print_colored "$YELLOW" "Package $1 already exists, no need to install additional $2"
     fi
@@ -84,17 +93,30 @@ install_package_and_additional() {
 # check cmd $1, if not found install additional $2
 check_cmd_install_additional() {
     if ! command_exists $1; then
-        $SUDO_CMD $PACK_MGR update && $SUDO_CMD $PACK_MGR install -yq $2
+        $SUDO_CMD $PACK_MGR update && $SUDO_CMD $PACK_MGR install -y $2
     else
         print_colored "$YELLOW" "Cmd $1 already exists, no need to install additional $2"
     fi
 }
 
-# check link $1, if not found install additional
-check_link_install_additional() {
-    if [[ ! -L $1 ]]; then
-        $SUDO_CMD $PACK_MGR update && $SUDO_CMD $PACK_MGR install -yq $2
-    else
-        print_colored "$YELLOW" "Link $1 already exists, no need to install additional $2"
-    fi
+# Flexible function to add APT repositories with GPG keys
+add_apt_repo() {
+    local key_url="$1"
+    local key_file="$2"
+    local repo_url="$3"
+    local list_file="$4"
+
+    echo "Adding GPG key from $key_url..."
+    curl -fsSL "$key_url" | sudo gpg --yes --dearmor -o "/usr/share/keyrings/$key_file"
+
+    echo "Adding APT repository $repo_url..."
+    echo "deb [signed-by=/usr/share/keyrings/$key_file] $repo_url * *" | sudo tee "/etc/apt/sources.list.d/$list_file"
+
+    echo "Setting permissions for the key..."
+    sudo chmod 644 "/usr/share/keyrings/$key_file"
+
+    echo "Updating package lists..."
+    sudo apt update
+
+    echo "Repository $repo_url added successfully!"
 }

@@ -12,7 +12,7 @@ PREFIX="$(dirname "$0")"
 # Editors
 "$PREFIX/nvim/setup.sh"
 "$PREFIX/spacemacs/setup.sh"
-"$PREFIX/helix/setup.sh"
+#"$PREFIX/helix/setup.sh"
 
 # Window mgr + Terminal multiplexer
 "$PREFIX/i3/setup.sh"
@@ -21,8 +21,9 @@ PREFIX="$(dirname "$0")"
 # Terminals
 "$PREFIX/terminals/setup.sh"
 
+# Language Tools
+"$PREFIX/custom/setup.sh"
+
 # Docker
 "$PREFIX/docker/setup.sh"
 
-# Catch-all
-"$PREFIX/custom/setup.sh"

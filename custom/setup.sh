@@ -77,7 +77,7 @@ install_github_desktop() {
 }
 
 # Install Elixir language server since Helix (and apparently Neovim now can) doesn't seem to be able to do so automatically
-install_elixirls
+# install_elixirls
 
 # Install Rust-based uv
 install_fast_python_manager

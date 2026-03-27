@@ -136,6 +136,7 @@ up() {
 
 export PATH="$PATH:$HOME/.local/share/elixir-ls/release"
 export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+export PATH="$PATH:$HOME/.local/bin"
 export PATH="$PATH:/opt/zig-linux-x86_64-0.14.0-dev.3388+e0a955afb/"
 
 # shell customization (prompt and dir navigation)
@@ -148,7 +149,5 @@ source "$HOME/.local/share/blesh/ble.sh" # syntax highlight, autocompletion
 eval "$(uv generate-shell-completion bash)"
 eval "$(uvx --generate-shell-completion bash)"
 
-. "$HOME/.local/share/../bin/env"
-. "$HOME/.cargo/env"
-
 [ -f "/home/brpandey/.ghcup/env" ] && . "/home/brpandey/.ghcup/env" # ghcup-env
+
