@@ -3,6 +3,9 @@
 # Run all modules in proper order
 PREFIX="$(dirname "$0")"
 
+# Setup basic command line tools
+"$PREFIX/cli-tools/setup.sh"
+
 "$PREFIX/fonts/setup.sh"
 "$PREFIX/xprofile/setup.sh"
 

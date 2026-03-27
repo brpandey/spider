@@ -37,8 +37,6 @@ stow_check_apply() {
     local package="$2"    # The specific package to be stowed
     STOW_SUCCESS_TOKEN="LINK"
 
-    install_package_only "stow"
-
     # Run the dry-run command and capture the output,
     # stow outputs to stderr so switch it to stdout
     local grep_output=$(stow -nvt ~ -d "$spider_dir" "$package" 2>&1 | grep "$STOW_SUCCESS_TOKEN")

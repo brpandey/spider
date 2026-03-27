@@ -4,16 +4,7 @@
 source "$(dirname "$0")/../shared.sh"
 greeting $0
 
-# Include additional packages for use in the command line
-# https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration
-CLI_TOOLS="gawk git curl wget make bat trash-cli eza fzf ripgrep gedit okular ranger htop gnome-software gnome-tweak-tool" # tldr
 BLESH_FPATH="$HOME/.local/share/blesh/ble.sh"
-
-install_cli_tools() {
-    echo "About to install CLI Tools"
-    check_cmd_install_additional "gawk" "$CLI_TOOLS"
-    echo "Finished installing CLI Tools"
-}
 
 # fish is really cool, but bash also has ble.sh
 install_blesh() {
@@ -51,7 +42,6 @@ backup_bashrc() {
     fi
 }
 
-install_cli_tools
 install_blesh
 install_zoxide
 
