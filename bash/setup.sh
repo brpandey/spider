@@ -6,7 +6,7 @@ greeting $0
 
 # Include additional packages for use in the command line
 # https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration
-CLI_TOOLS="gawk git curl wget make bat trash-cli eza fzf ripgrep gedit ranger gnome-tweak-tool" # tldr
+CLI_TOOLS="gawk git curl wget make bat trash-cli eza fzf ripgrep gedit okular ranger htop gnome-software gnome-tweak-tool" # tldr
 BLESH_FPATH="$HOME/.local/share/blesh/ble.sh"
 
 install_cli_tools() {
@@ -19,11 +19,11 @@ install_cli_tools() {
 install_blesh() {
     # if blesh path not found, then clone ble.sh to temp dir and install locally
     if [[ ! -f "$BLESH_FPATH" ]]; then
-	pushd "."
+        pushd "."
         TEMP_DIR=$(mktemp -d)
         git -C $TEMP_DIR clone --recursive --depth 1 --shallow-submodules https://github.com/akinomyoga/ble.sh.git
         cd $TEMP_DIR && make -C ble.sh install PREFIX=~/.local
-	popd
+        popd
     else
         print_colored "$YELLOW" "ble.sh already installed"
     fi
@@ -41,13 +41,13 @@ install_zoxide() {
 }
 
 backup_bashrc() {
-# If bash_aliases is not present while bashrc is present and not a symlink (already stowed)
-# then backup as _default
+    # If bash_aliases is not present while bashrc is present and not a symlink (already stowed)
+    # then backup as _default
     if [ ! -f "$HOME/.bash_aliases" ] && [ -f "$HOME/.bashrc" ] && [ ! -L "$HOME/.bashrc" ]; then
-      if [ ! -f "$HOME/.bashrc_default" ]; then
-        mv "$HOME/.bashrc" "$HOME/.bashrc_default"
-        echo "Backed up .bashrc to .bashrc_default"
-      fi
+        if [ ! -f "$HOME/.bashrc_default" ]; then
+            mv "$HOME/.bashrc" "$HOME/.bashrc_default"
+            echo "Backed up .bashrc to .bashrc_default"
+        fi
     fi
 }
 

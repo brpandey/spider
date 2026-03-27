@@ -10,17 +10,16 @@ ASDF_DIR="$HOME/.asdf"
 ERLANG_VERSION="26.0"
 ELIXIR_VERSION="1.15.3-otp-26"
 
-
 setup_asdf_and_prerequisites() {
     # Install prerequisites only if Erlang or Elixir not installed via asdf
-    if ! command -v asdf >/dev/null 2>&1 || \
-       ! asdf global erlang >/dev/null 2>&1 && ! asdf global elixir >/dev/null 2>&1; then
+    if ! command -v asdf >/dev/null 2>&1 ||
+        ! asdf global erlang >/dev/null 2>&1 && ! asdf global elixir >/dev/null 2>&1; then
         echo "Installing prerequisites..."
         sudo apt update
         sudo apt install -y \
-             git curl build-essential autoconf m4 libncurses-dev \
-             libgl1-mesa-dev libglu1-mesa-dev libpng-dev libssh-dev \
-             unixodbc-dev xsltproc fop libxml2-utils libssl-dev
+            git curl build-essential autoconf m4 libncurses-dev \
+            libgl1-mesa-dev libglu1-mesa-dev libpng-dev libssh-dev \
+            unixodbc-dev xsltproc fop libxml2-utils libssl-dev
     else
         echo "Prerequisites skipped (Erlang or Elixir already installed)."
     fi
@@ -72,27 +71,35 @@ setup_asdf_and_prerequisites
 install_erlang_and_elixir
 verify_installation
 
+#install_phoenix
 
+install_phoenix() {
+    if command -v mix >/dev/null 2>&1; then
+        echo "Install phoenix"
+        mix archive.install hex phx_new
+        return 0
+    fi
+}
 
 install_rust() {
     # Check if rustc is already installed
     if command -v rustc >/dev/null 2>&1; then
-        echo "✅ Rust is already installed: $(rustc --version)"
-        echo "✅ Cargo version: $(cargo --version)"
+        echo "Rust is already installed: $(rustc --version)"
+        echo "Cargo version: $(cargo --version)"
         return 0
     fi
 
-    echo "✅ Updating package lists..."
+    echo "Updating package lists..."
     sudo apt update
 
-    echo "✅ Installing prerequisites (build-essential, curl, pkg-config, libssl-dev)..."
+    echo "Installing prerequisites (build-essential, curl, pkg-config, libssl-dev)..."
     sudo apt install -y build-essential curl pkg-config libssl-dev
 
-    echo "✅ Installing Rust via Rustup..."
+    echo "Installing Rust via Rustup..."
     # Non-interactive install: default profile, no prompt
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
-    print_colored "$GREEN" "✅ Verifying Rust installation..."
+    print_colored "$GREEN" "Verifying Rust installation..."
     rustc_version=$(rustc --version 2>/dev/null || echo "not installed")
     cargo_version=$(cargo --version 2>/dev/null || echo "not installed")
 
@@ -100,9 +107,6 @@ install_rust() {
     print_colored "$YELLOW" "Cargo version: $cargo_version"
 
 }
-
-
-
 
 install_rust
 

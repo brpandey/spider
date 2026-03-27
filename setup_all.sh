@@ -21,9 +21,11 @@ PREFIX="$(dirname "$0")"
 # Terminals
 "$PREFIX/terminals/setup.sh"
 
-# Language Tools
-"$PREFIX/custom/setup.sh"
+# Languages
+"$PREFIX/languages/setup.sh"
+
+# Dev Tools
+"$PREFIX/dev-tools/setup.sh"
 
 # Docker
 "$PREFIX/docker/setup.sh"
-

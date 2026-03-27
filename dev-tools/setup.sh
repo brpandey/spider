@@ -56,28 +56,49 @@ install_elixirls() {
 }
 
 install_github_desktop() {
-    local cmd="github-desktop"
-    local key_url="https://apt.packages.shiftkey.dev/gpg.key"
-    local key_url2="https://apt.packages.shiftkey.dev/ubuntu/"
-    local key_path="/usr/share/keyrings/shiftkey-packages.gpg"
-    local sources_path="/etc/apt/sources.list.d/shiftkey-packages.list"
-
-    if ! command_exists $cmd; then
-        if ! wget -qO - $key_url | gpg --dearmor | $SUDO_CMD tee $key_path >/dev/null; then
-            print_colored "$RED" "Something went wrong during wget of "$key_url" install or gpg dearmor!"
-            exit 1
-        fi
-
-        echo "deb [arch=$(dpkg --print-architecture) signed-by="$key_path"] "$key_url2" any main" | $SUDO_CMD tee "$sources_path" >/dev/null
-
-        install_package $cmd
-    else
-        print_colored "$YELLOW" "Package $cmd already exists, no need to install"
+    # Check if already installed
+    if command -v github-desktop >/dev/null 2>&1; then
+        echo "GitHub Desktop is already installed:"
+        github-desktop --version 2>/dev/null || true
+        return 0
     fi
+
+    TMP_DIR=$(mktemp -d)
+    trap 'rm -rf "$TMP_DIR"' EXIT
+
+    echo "Fetching latest version..."
+    VERSION=$(curl -s https://api.github.com/repos/shiftkey/desktop/releases/latest |
+        grep -oP '"tag_name": "release-\K[^"]+')
+
+    if [[ -z "$VERSION" ]]; then
+        echo "Error: Could not determine latest version."
+        return 1
+    fi
+
+    ARCH=$(dpkg --print-architecture)
+    FILE="GitHubDesktop-linux-${ARCH}-${VERSION}.deb"
+    URL="https://github.com/shiftkey/desktop/releases/download/release-${VERSION}/${FILE}"
+
+    echo "Downloading $FILE..."
+    curl -L -o "$TMP_DIR/$FILE" "$URL"
+
+    echo "Installing $FILE..."
+    sudo apt install -y "$TMP_DIR/$FILE"
+
+    echo "Verifying installation..."
+    apt-cache policy github-desktop
 }
 
+install_pdflatex() {
+    TEX_TOOLS="texlive-latex-base texlive-latex-recommended texlive-fonts-recommended"
+    check_cmd_install_additional "pdflatex" "$TEX_TOOLS"
+}
+
+# Convert latex files into pdf
+install_pdflatex
+
 # Install Elixir language server since Helix (and apparently Neovim now can) doesn't seem to be able to do so automatically
-# install_elixirls
+install_elixirls
 
 # Install Rust-based uv
 install_fast_python_manager

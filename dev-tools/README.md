@@ -1,6 +1,6 @@
-## Custom
+## dev-tools
 
-For now, represents catch-all installations that need to happen
+For now, represents catch-all development related installations that need to happen
 that are outside other module directories
 
 - Python UV Manager
