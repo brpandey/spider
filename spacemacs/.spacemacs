@@ -614,6 +614,8 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
+  (with-eval-after-load 'evil
+    (define-key evil-insert-state-map (kbd "j k") 'evil-normal-state))
   )
 
 
