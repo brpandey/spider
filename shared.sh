@@ -90,10 +90,13 @@ install_package_and_additional() {
 
 # check cmd $1, if not found install additional $2
 check_cmd_install_additional() {
-    if ! command_exists $1; then
-        $SUDO_CMD $PACK_MGR update && $SUDO_CMD $PACK_MGR install -y $2
+    local trigger="$1"
+    
+    if ! command_exists "$trigger"; then
+        $SUDO_CMD $PACK_MGR update && \
+        $SUDO_CMD $PACK_MGR install -y "$@"
     else
-        print_colored "$YELLOW" "Cmd $1 already exists, no need to install additional $2"
+        print_colored "$YELLOW" "Cmd $trigger already exists, no need to install additional $2"
     fi
 }
 
